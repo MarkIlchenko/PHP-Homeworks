@@ -213,7 +213,7 @@ class TaskTracker
         }
     }
 
-    // Цей метод змiнюэ статус задачi
+    // Цей метод змiнюэ статус задачi.
     public function interactiveChangeTaskStatus(): void
     {
         $this->displayTasks();
