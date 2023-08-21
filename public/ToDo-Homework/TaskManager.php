@@ -15,6 +15,7 @@ class TaskTracker
     private const COMMAND_DELETE = 'delete';
     private const COMMAND_VIEW = 'view';
     private const COMMAND_EXIT = 'exit';
+    private const COMMAND_CHANGE = 'change status';
 
     public function __construct($filePath)
     {
@@ -175,7 +176,7 @@ class TaskTracker
     public function interactiveTaskInput(): void
     {
         while (true) {
-            $command = readline("Enter '" . self::COMMAND_ADD . "' to add a task, '" . self::COMMAND_DELETE . "' to delete a task, '" . self::COMMAND_VIEW . "' to see all the tasks or '" . self::COMMAND_EXIT . "' to quit: ");
+            $command = readline("Enter '" . self::COMMAND_ADD . "' to add a task, '" . self::COMMAND_DELETE . "' to delete a task, '" . self::COMMAND_VIEW . "' to see all the tasks, '" . self::COMMAND_CHANGE . "' to change task status or '" . self::COMMAND_EXIT . "' to quit: ");
 
             switch ($command) {
                 case self::COMMAND_EXIT:
@@ -189,10 +190,49 @@ class TaskTracker
                 case self::COMMAND_VIEW:
                     $this->viewTasksByPriority();
                     break;
+                case self::COMMAND_CHANGE:
+                    $this->interactiveChangeTaskStatus();
+                    break;
                 default:
-                    echo "Unknown command. Please enter '" . self::COMMAND_ADD . "', '" . self::COMMAND_DELETE . "', '" . self::COMMAND_VIEW . "' or '" . self::COMMAND_EXIT . "'.\n";
-            };
+                    echo "Unknown command. Please enter '" . self::COMMAND_ADD . "', '" . self::COMMAND_DELETE . "', '" . self::COMMAND_VIEW . "', '" . self::COMMAND_CHANGE . "' or '" . self::COMMAND_EXIT . "'.\n";
+            }
         }
     }
+
+    // Цей метод змiнюэ статус задачi
+    public function changeTaskStatus($taskId, $newStatus): void
+    {
+        $taskIndex = array_search($taskId, array_column($this->tasks, 'id'));
+
+        if ($taskIndex !== false) {
+            $this->tasks[$taskIndex]['status'] = $newStatus;
+            $this->saveTasksToFile();
+            echo "Task status updated successfully!\n";
+        } else {
+            echo "Task with ID '{$taskId}' not found.\n";
+        }
+    }
+
+    // Цей метод змiнюэ статус задачi
+    public function interactiveChangeTaskStatus(): void
+    {
+        $this->displayTasks();
+        $taskToUpdate = readline("Enter the task number or ID to change status: ");
+
+        $taskIndex = is_numeric($taskToUpdate) ? (int)$taskToUpdate : null;
+
+        if ($taskIndex !== null) {
+            $taskId = $this->tasks[$taskIndex]['id'];
+            $newStatus = readline("Enter new status (виконано/не виконано): ");
+            if ($newStatus === 'виконано' || $newStatus === 'не виконано') {
+                $this->changeTaskStatus($taskId, $newStatus);
+            } else {
+                echo "Invalid status input. Please enter 'виконано' or 'не виконано'.\n";
+            }
+        } else {
+            echo "Invalid task number or ID.\n";
+        }
+    }
+
 }
 
