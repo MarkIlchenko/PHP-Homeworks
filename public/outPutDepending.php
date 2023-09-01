@@ -1,22 +1,16 @@
 <?php
 function getColorName($value) {
-    $colorMap = array(
+    return match ($value) {
         "008000" => 'green',
         "FF0000" => 'red',
         "0000FF" => 'blue',
         "964B00" => 'brown',
         "7F00FF" => 'violet',
         "000000" => 'black',
-    );
-//    array_key_exists - это встроенная функция в PHP
-    if (array_key_exists($value, $colorMap)) {
-        return $colorMap[$value];
-    } else {
-        return 'white';
-    }
+        default => 'white',
+    };
 }
 
-// Приклад використання:
 echo "Ви можете ввести найпопулярніші HEX-коди для кольору, який ви бажаєте.\n";
 echo "PS: ось шпаргалка\n";
 
